@@ -1,6 +1,7 @@
+from datetime import timedelta
 from pathlib import Path
 
-import constans as const
+import config.constants as const
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -18,6 +19,12 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'api',
+    'users',
+    'collects'
+    'rest_framework',
+    'djoser',
+    'drf_spectacular'
 ]
 
 MIDDLEWARE = [
@@ -30,7 +37,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'src.urls'
+ROOT_URLCONF = 'config.urls'
 
 TEMPLATES = [
     {
@@ -47,7 +54,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'src.wsgi.application'
+WSGI_APPLICATION = 'config.wsgi.application'
 
 
 # Database
@@ -77,6 +84,56 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+AUTH_USER_MODEL = 'users.User'
+
+# DRF
+
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated',
+    ],
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+        'rest_framework.authentication.BasicAuthentication'
+    ],
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+}
+
+# Djoser
+
+DJOSER = {
+    'SERIALIZERS': {
+        'user_create': 'api.serializers.UserCreationSerializer', },
+    'LOGIN_FIELD': 'email',
+}
+
+AUTHENTICATION_BACKENDS = [
+    'djoser.auth_backends.LoginFieldBackend',
+]
+
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(days=1),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=5),
+    'ROTATE_REFRESH_TOKENS': True,
+    'BLACKLIST_AFTER_ROTATION': True,
+    'AUTH_HEADER_TYPES': ('Bearer',)
+}
+
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'Whip-round API',
+    'DESCRIPTION': 'Web service for group fundraising',
+    'VERSION': '1.0.0',
+    'SERVE_INCLUDE_SCHEMA': False
+}
+
+# SMTP
+
+EMAIL_HOST = const.EMAIL_HOST
+EMAIL_PORT = const.EMAIL_PORT
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = const.EMAIL_HOST_USER
+EMAIL_HOST_PASSWORD = const.EMAIL_HOST_PASSWORD
+
 
 # Internationalization
 
@@ -89,7 +146,7 @@ USE_I18N = True
 USE_TZ = True
 
 
-# Static files (CSS, JavaScript, Images)
+# Static files
 
 STATIC_URL = 'static/'
 
