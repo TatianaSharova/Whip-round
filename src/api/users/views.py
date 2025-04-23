@@ -14,9 +14,9 @@ class UserViewSet(
     mixins.ListModelMixin,
     mixins.RetrieveModelMixin,
 ):
-    '''
+    """
     ViewSet для регистрации и просмотра пользователей.
-    '''
+    """
     queryset = User.objects.all()
     permission_classes = (AllowAny,)
 
