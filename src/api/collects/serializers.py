@@ -8,7 +8,7 @@ from rest_framework import serializers
 from api.payments.serializers import PaymentInCollectSerializer
 from api.users.serializers import UserInCollectSerializer
 from collects.models import Collect
-from config.constants import REASON_TYPES
+from config.constants import MIN_TARGET, REASON_TYPES
 
 
 class Base64ImageField(serializers.ImageField):
@@ -33,6 +33,7 @@ class CollectSerializer(serializers.ModelSerializer):
     end_date = serializers.DateTimeField(
         input_formats=['%d.%m.%Y', '%d.%m.%Y %H:%M']
     )
+    target = serializers.IntegerField(min_value=MIN_TARGET)
 
     class Meta:
         model = Collect
