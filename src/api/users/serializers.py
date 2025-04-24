@@ -15,13 +15,14 @@ class UserCreationSerializer(UserCreateSerializer):
         model = User
         fields = ('id', 'email', 'password', 'username',
                   'first_name', 'last_name', 'patronymic')
+        read_only_fields = ('id',)
 
 
 class UserSerializer(serializers.ModelSerializer):
     """Serializer для получения данных пользователя."""
     class Meta:
         model = User
-        fields = ('first_name', 'last_name', 'patronymic',
+        fields = ('id', 'first_name', 'last_name', 'patronymic',
                   'email', 'username', 'date_joined', 'last_login')
 
 
