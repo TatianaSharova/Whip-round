@@ -6,6 +6,7 @@ from api.collects import openapi
 from api.payments.serializers import PaymentInCollectSerializer
 from api.utils import send_creation_email
 from collects.models import Collect
+from collects.tasks import deactivate_collect
 from config import constants as const
 
 from .permissions import IsAuthorOrAdminOrReadOnly
@@ -15,10 +16,10 @@ from .serializers import (CollectReadSerializer, CollectSerializer,
 
 @openapi.collect
 class CollectViewSet(viewsets.ModelViewSet):
-    '''
+    """
     ViewSet для создания, чтения, редактирования и удаления
     группового сбора.
-    '''
+    """
     queryset = Collect.objects.all()
     http_method_names = [
         'get', 'post', 'patch', 'delete', 'head', 'options'
@@ -31,12 +32,21 @@ class CollectViewSet(viewsets.ModelViewSet):
         return CollectSerializer
 
     def perform_create(self, serializer):
-        """Отправка письма автору о создании сбора."""
+        """
+        Отправка письма автору о создании сбора
+        и создание отложенной задачи на деактивацию сбора
+        при наступлении его end_date (время окончания).
+        """
         collect = serializer.save()
 
         subject = const.COLLECT_SUB_TEXT
         message = const.COLLECT_MESSAGE_TEXT
         send_creation_email(subject, message, collect.author.email)
+
+        deactivate_collect.apply_async(
+            args=[collect.id],
+            eta=collect.end_date
+        )
 
     def destroy(self, request, *args, **kwargs):
         """
