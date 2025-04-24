@@ -19,12 +19,13 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'rest_framework',
+    'djoser',
+    'drf_spectacular',
+    'cacheops',
     'api',
     'users',
     'collects',
-    'rest_framework',
-    'djoser',
-    'drf_spectacular'
 ]
 
 MIDDLEWARE = [
@@ -61,11 +62,51 @@ WSGI_APPLICATION = 'config.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': const.POSTGRES_ENGINE,
+        'NAME': const.POSTGRES_DB,
+        'USER': const.POSTGRES_USER,
+        'PASSWORD': const.POSTGRES_PASSWORD,
+        'HOST': const.POSTGRES_HOST,
+        'PORT': const.POSTGRES_PORT,
     }
 }
 
+# Cache
+
+CACHES = {
+    'default': {
+        'BACKEND': const.CACHE_BACKEND,
+        'LOCATION': const.CACHE_LOCATION,
+        'OPTIONS': {
+            'CLIENT_CLASS': const.CACHE_CLIENT_CLASS,
+        }
+    }
+}
+
+# Cacheops
+
+CACHEOPS_REDIS = {
+    'host': const.CACHE_HOST,
+    'port': const.CACHE_PORT,
+    'db': const.CACHE_DB,
+    'socket_timeout': 3,
+}
+
+CACHEOPS = {
+    'users.user': {'ops': 'all', 'timeout': 60 * 15},
+    'collects.collect': {'ops': 'all', 'timeout': 60 * 15},
+    'collects.payment': {'ops': 'all', 'timeout': 60 * 15},
+}
+
+CACHEOPS_DEGRADE_ON_FAILURE = True
+
+# Celery
+
+CELERY_BROKER_URL = const.CACHE_LOCATION
+
+CELERY_ACCEPT_CONTENT = ['json']
+
+CELERY_TASK_SERIALIZER = 'json'
 
 # Password validation
 
@@ -130,6 +171,7 @@ SPECTACULAR_SETTINGS = {
 
 # SMTP
 
+EMAIL_BACKEND = const.EMAIL_BACKEND
 EMAIL_HOST = const.EMAIL_HOST
 EMAIL_PORT = const.EMAIL_PORT
 EMAIL_USE_TLS = True
@@ -139,9 +181,9 @@ EMAIL_HOST_PASSWORD = const.EMAIL_HOST_PASSWORD
 
 # Internationalization
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'ru-RU'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Europe/Moscow'
 
 USE_I18N = True
 
