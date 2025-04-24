@@ -30,6 +30,6 @@ class PaymentInCollectSerializer(serializers.ModelSerializer):
         model = Payment
         fields = ('id', 'amount', 'created_at', 'author')
 
-    def get_author(self, obj):
+    def get_author(self, obj) -> str:
         """Получение имени автора платежа."""
         return obj.author.get_full_name()
