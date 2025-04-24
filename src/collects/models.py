@@ -3,8 +3,8 @@ from django.db import models
 from django.db.models import Sum
 
 from config.constants import (COLLECT_MAX_LENGTH, MAX_LENGTH_REASON,
-                              MAX_PAYMENT_AMOUNT, MIN_PAYMENT_AMOUNT,
-                              REASON_TYPES)
+                              MAX_PAYMENT_AMOUNT, MAX_TARGET,
+                              MIN_PAYMENT_AMOUNT, MIN_TARGET, REASON_TYPES)
 from users.models import User
 
 
@@ -21,6 +21,8 @@ class Collect(models.Model):
                                     null=True, blank=True)
     target = models.PositiveIntegerField(
         'Цель сбора', null=True, blank=True,
+        validators=[MinValueValidator(MIN_TARGET),
+                    MaxValueValidator(MAX_TARGET)],
         help_text='Оставьте пустым для бесконечного сбора'
     )
     image = models.ImageField('Обложка', upload_to='collects/images/',
