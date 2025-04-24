@@ -1,4 +1,4 @@
-Whip-round - RESTful api-сервис для создания групповых денежных сборов. Зарегистрированные пользователи могут создавать сборы и платежи для своих/чужих сборов
+Whip-round - RESTful API-сервис для создания групповых денежных сборов. Зарегистрированные пользователи могут создавать сборы и платежи для своих/чужих сборов.
                 
 Стек: Python3.11.9, Django, DRF, PostgreSQL, Docker-compose, Gunicorn, Nginx, Celery, Celery-beat, django-cacheops, Redis, drf_spectacular.  
                          
@@ -8,7 +8,7 @@ Whip-round - RESTful api-сервис для создания групповых
 - [Заполнение бд моковыми данными](#)
 - [Pre-commit](#pre-commit)
                      
-___
+
 ## Локальный запуск проекта
 
 1. Клонировать репозиторий и перейти в него в командной строке:
@@ -19,7 +19,9 @@ git clone https://github.com/TatianaSharova/Whip-round.git
 **_Запуск проекта через docker-compose:_**  
 
 2. На основе .env.example создайте файл .env в корне проекта. Данные в .env.example можно использовать только для локального запуска.
-Как получить EMAIL_HOST_PASSWORD можно посмотреть здесь: https://www.geeksforgeeks.org/setup-sending-email-in-django-project/                                          
+
+Как получить EMAIL_HOST_PASSWORD можно посмотреть [здесь](https://www.geeksforgeeks.org/setup-sending-email-in-django-project/)   
+
 3. В терминале для запуска выполните команду в корне проекта:
 
 ```bash
@@ -37,10 +39,10 @@ http://localhost:8000/schema/swagger/
 Основные endpoint'ы проекта:
 <img src="screens/photo.png" alt="swagger" style="float: left; margin-right: 10px;" />
 
-# Аутентификация
+### Аутентификация
 Аутентификация осуществляется по JWT-токенам. Получение токена и регистрация доступны по соответствующим endpoint'ам. Также для упрощения локального тестирования подключена Basic-аутентификация.
 
-# Особенности
+### Особенности
 - Каждый сбор имеет дату завершения, при наступлении которой автоматически деактивируется через Celery-задачу.
 - Используется кэширование через django-cacheops.
 
@@ -49,19 +51,19 @@ http://localhost:8000/schema/swagger/
 ```bash
 docker exec -it whip_backend python manage.py create_mock_data
 ```
-В консоль выведется рузультат загрузки данных.
+В консоли выведется рузультат загрузки данных.
 
 ## Pre-commit
-Этот проект использует [`pre-commit`](https://pre-commit.com/) для автоматического запуска линтеров перед коммитом.
+Этот проект использует [pre-commit](https://pre-commit.com/) для автоматического запуска линтеров перед коммитом.
 
-# Установка
+### Установка
 Установите зависимости для линтинга:
 
 ```bash
 pip install -r src/requirements/requirements.lint.txt
 ```
 
-# Настройка pre-commit
+### Настройка pre-commit
 Установи хуки:
 
 ```bash
@@ -70,7 +72,7 @@ pre-commit install
 
 Теперь при каждом коммите будут запускаться проверки `flake8` и `isort`.
 
-## Ручной запуск
+### Ручной запуск
 
 Проверить все файлы вручную:
 ```bash
