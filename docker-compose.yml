@@ -1,0 +1,66 @@
+volumes:
+  pg_data:
+  static:
+  media:
+  redis_data:
+
+
+services:
+  postgres_db:
+    container_name: postgres_db
+    image: postgres:15-alpine
+    env_file: .env
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "PGPASSWORD=${POSTGRES_PASSWORD} pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 1s
+      timeout: 5s
+      retries: 10
+
+  backend:
+    build: ./src/
+    container_name: whip_backend
+    env_file: .env
+    volumes:
+      - static:/backend_static/
+      - media:/app/media/
+    depends_on:
+      postgres_db:
+          condition: service_healthy
+  
+  nginx:
+    build: ./nginx/
+    container_name: whip_nginx
+    env_file: .env
+    volumes:
+      - static:/staticfiles/
+      - media:/app/media/
+    ports:
+      - ${NGINX_PORT}:80
+    depends_on:
+      - backend
+  
+  redis:
+    image: redis:latest
+    restart: always
+    container_name: redis_container
+    volumes:
+      - redis_data:/data
+  
+  celery_worker:
+    build: ./src/
+    container_name: celery_worker_container
+    command: celery -A config worker --loglevel=info
+    env_file: .env
+    depends_on:
+      - backend
+      - redis
+
+  celery_beat:
+    build: ./src/
+    container_name: celery_beat_container
+    command: celery -A config beat --loglevel=info
+    env_file: .env
+    depends_on:
+      - celery_worker
