@@ -1,14 +1,10 @@
 from rest_framework import serializers
 
 from collects.models import Collect, Payment
-from config.constants import MAX_PAYMENT_AMOUNT, MIN_PAYMENT_AMOUNT
 
 
 class PaymentSerializer(serializers.ModelSerializer):
     """Serializer для создания платежа."""
-
-    amount = serializers.IntegerField(min_value=MIN_PAYMENT_AMOUNT,
-                                      max_value=MAX_PAYMENT_AMOUNT)
     author = serializers.HiddenField(
         default=serializers.CurrentUserDefault()
     )
@@ -19,7 +15,7 @@ class PaymentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Payment
         fields = ('id', 'amount', 'created_at', 'author', 'collect')
-        read_only_fields = ('id', 'created_at', 'author')
+        read_only_fields = ('id', 'created_at')
 
 
 class PaymentInCollectSerializer(serializers.ModelSerializer):
