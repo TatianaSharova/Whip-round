@@ -8,7 +8,6 @@ from rest_framework import serializers
 from api.payments.serializers import PaymentInCollectSerializer
 from api.users.serializers import UserInCollectSerializer
 from collects.models import Collect
-from config.constants import MIN_TARGET, REASON_TYPES
 
 
 class Base64ImageField(serializers.ImageField):
@@ -26,21 +25,19 @@ class Base64ImageField(serializers.ImageField):
 class CollectSerializer(serializers.ModelSerializer):
     """Serializer для создания и редактирования группового сбора."""
     image = Base64ImageField()
-    reason = serializers.ChoiceField(choices=REASON_TYPES)
     author = serializers.HiddenField(
         default=serializers.CurrentUserDefault()
     )
     end_date = serializers.DateTimeField(
         input_formats=['%d.%m.%Y', '%d.%m.%Y %H:%M']
     )
-    target = serializers.IntegerField(min_value=MIN_TARGET)
 
     class Meta:
         model = Collect
         fields = ('id', 'title', 'description', 'reason', 'created_at',
                   'end_date', 'collected_amount', 'target', 'image',
                   'is_active', 'author')
-        read_only_fields = ('id', 'created_at', 'collected_amount', 'author')
+        read_only_fields = ('id', 'created_at', 'collected_amount')
 
     def validate_end_date(self, value):
         """Проверка даты завершения сбора."""
@@ -58,8 +55,6 @@ class CollectSerializer(serializers.ModelSerializer):
 class CollectReadSerializer(serializers.ModelSerializer):
     """Serializer для получения данных о групповом сборе."""
     author = UserInCollectSerializer(read_only=True)
-    payments_count = serializers.IntegerField(read_only=True)
-    collected_amount = serializers.IntegerField(read_only=True)
     image = Base64ImageField()
     payments = PaymentInCollectSerializer(many=True, read_only=True)
 
@@ -71,4 +66,5 @@ class CollectReadSerializer(serializers.ModelSerializer):
 
 
 class IsActiveUpdateSerializer(serializers.Serializer):
+    """Serializer для обновления активности сбора."""
     is_active = serializers.BooleanField()
